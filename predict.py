@@ -11,21 +11,31 @@ torch.set_printoptions(6)
 def main(args):
     """Execute prediction and save the results"""
 
+    device = torch.accelerator.current_accelerator().type if torch.accelerator.is_available() else "cpu"
+    print(f"Using {device} device")
+
     model_args = args.pred_setups.model
     model = MODELS[model_args.name](**model_args.params)
 
     if "ensemble" in args.pred_setups.name:
-        weights = torch.load(args.pred_setups.model_path1, map_location="cpu")
+        #weights = torch.load(args.pred_setups.model_path1, map_location="cpu")
+        
+        weights = torch.load(args.pred_setups.model_path1, map_location=device)
         model.load_state_dict(weights, strict=False)
+        ###
+        model = model.to(device)
 
         model_aux = MODELS[model_args.name](**model_args.params)
-        weights_aux = torch.load(args.pred_setups.model_path2, map_location="cpu")
+        weights_aux = torch.load(args.pred_setups.model_path2, map_location=device)
         model_aux.load_state_dict(weights_aux, strict=False)
+
+        ###
+        model_aux = model_aux.to(device)
 
         predictor = PREDICTOR[args.pred_setups.name](
             model,
             model_aux,
-            args.pred_setups.device,
+            device,
             args.pred_setups.input_path,
             args.pred_setups.output_path,
             args.pred_setups.make_submission,
@@ -34,12 +44,15 @@ def main(args):
         )
 
     else:
-        weights = torch.load(args.pred_setups.model_path, map_location="cpu")
+        weights = torch.load(args.pred_setups.model_path, map_location=device)
         model.load_state_dict(weights, strict=False)
+
+        ###
+        model = model.to(device)
 
         predictor = PREDICTOR[args.pred_setups.name](
             model,
-            args.pred_setups.device,
+            device,
             args.pred_setups.input_path,
             args.pred_setups.output_path,
             args.pred_setups.make_submission,

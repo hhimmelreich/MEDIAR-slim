@@ -73,6 +73,11 @@ class Predictor(BasePredictor):
 
     def _window_inference(self, img_data, aux=False):
         """Inference on RoI-sized window"""
+
+        #import time
+
+        #start = time.time()
+
         outputs = sliding_window_inference(
             img_data,
             roi_size=512,
@@ -82,6 +87,9 @@ class Predictor(BasePredictor):
             mode="gaussian",
             overlap=0.6,
         )
+
+        #end = time.time()
+        #print(f"Sliding window inference took {end - start} seconds(?)")
 
         return outputs
 

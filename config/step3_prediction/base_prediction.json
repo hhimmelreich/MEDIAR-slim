@@ -1,11 +1,11 @@
 {
     "pred_setups":{
         "name": "mediar",
-        "input_path":"/home/gihun/MEDIAR/data/Official/Tuning/images",
-        "output_path": "./results/mediar_base_prediction",
-        "make_submission": true,
-        "model_path": "./weights/finetuned/from_phase1.pth",
-        "device": "cuda:7",
+        "input_path":"/home/aime/repos/ndpi-processing/test_images",
+        "output_path": "./segmentation_results",
+        "make_submission": false,
+        "model_path": "/home/aime/repos/MEDIAR-slim/weights/finetuned/from_phase1.pth",
+        "device": "cuda:0",
         "model":{
             "name": "mediar-former",
             "params": {}
